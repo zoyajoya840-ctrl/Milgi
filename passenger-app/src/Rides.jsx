@@ -1,5 +1,6 @@
-function Rides({ ride }) {
-  if (!ride) {
+function Rides({ ride }) {             //rides is a function react componet , ride gives data and called it prop 
+  if (!ride) {         //no rides ava. then pop no rides 
+    
     return (
       <div className="rides-page">
         <div className="rides-header">
@@ -16,7 +17,7 @@ function Rides({ ride }) {
     );
   }
 
-  const statusText = {
+  const statusText = {       // actual product logic
     requested: "Finding a driver",
     accepted: "Driver accepted",
     started: "Ride in progress",
@@ -66,10 +67,10 @@ function Rides({ ride }) {
         </div>
 
         <div className="ride-details">
-          <div>
+          <div>                                                   
             <small>Estimated fare</small>
-            <strong>₹{ride.estimated_fare ?? 0}</strong>
-          </div>
+            <strong>₹{ride.estimated_fare ?? 0}</strong>       
+          </div>                    
 
           <div>
             <small>Ride ID</small>
