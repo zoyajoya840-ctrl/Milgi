@@ -1,0 +1,301 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: Inter, Arial, sans-serif;
+  background: #f7f8fa;
+  color: #171717;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+.app {
+  min-height: 100vh;
+  background: #f7f8fa;
+}
+
+/* HEADER */
+
+.header {
+  height: 72px;
+  background: #ffd400;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  border-bottom: 1px solid #e2bd00;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 24px;
+  font-weight: 900;
+  letter-spacing: -0.5px;
+}
+
+.logoBox {
+  width: 40px;
+  height: 40px;
+  background: #111;
+  color: #ffd400;
+  display: grid;
+  place-items: center;
+  border-radius: 11px;
+  font-weight: 900;
+}
+
+.driverTitle {
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* MAIN */
+
+.main {
+  width: min(1100px, calc(100% - 32px));
+  margin: 0 auto;
+  padding: 34px 0 60px;
+}
+
+.welcome {
+  margin-bottom: 24px;
+}
+
+.welcome h1 {
+  margin: 0 0 6px;
+  font-size: 32px;
+  letter-spacing: -1px;
+}
+
+.welcome p {
+  margin: 0;
+  color: #6b7280;
+  font-size: 16px;
+}
+
+/* STATUS */
+
+.statusCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 18px;
+  padding: 18px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.04);
+}
+
+.statusCard strong {
+  display: block;
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 5px;
+}
+
+.statusCard p {
+  margin: 0;
+  font-weight: 800;
+  font-size: 17px;
+}
+
+.refreshBtn {
+  border: 1px solid #d1d5db;
+  background: white;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+}
+
+.refreshBtn:hover {
+  background: #f3f4f6;
+}
+
+/* MESSAGE */
+
+.message {
+  background: #ecfdf3;
+  border: 1px solid #b7ebca;
+  color: #126b3a;
+  padding: 14px 18px;
+  border-radius: 12px;
+  margin-bottom: 20px;
+  font-weight: 700;
+}
+
+/* LOADING */
+
+.loading {
+  text-align: center;
+  color: #6b7280;
+  padding: 30px;
+}
+
+/* EMPTY */
+
+.empty {
+  background: white;
+  border: 1px dashed #d1d5db;
+  border-radius: 18px;
+  padding: 55px 20px;
+  text-align: center;
+}
+
+.emptyIcon {
+  font-size: 45px;
+  margin-bottom: 12px;
+}
+
+.empty h2 {
+  margin: 0 0 8px;
+}
+
+.empty p {
+  margin: 0;
+  color: #6b7280;
+}
+
+/* RIDES */
+
+.rides {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.rideCard {
+  background: white;
+  border: 1px solid #e5e7eb;
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.05);
+}
+
+.rideTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 22px;
+}
+
+.rideType {
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.fare {
+  font-size: 23px;
+  font-weight: 900;
+}
+
+/* LOCATION */
+
+.location {
+  margin-bottom: 18px;
+}
+
+.locationRow {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+
+.dot {
+  width: 12px;
+  height: 12px;
+  min-width: 12px;
+  border-radius: 50%;
+  margin-top: 5px;
+}
+
+.pickup {
+  background: #16a34a;
+}
+
+.drop {
+  background: #dc2626;
+}
+
+.locationRow small {
+  display: block;
+  color: #9ca3af;
+  font-size: 12px;
+  margin-bottom: 3px;
+}
+
+.locationRow strong {
+  display: block;
+  font-size: 16px;
+}
+
+.line {
+  height: 25px;
+  border-left: 2px dashed #d1d5db;
+  margin-left: 5px;
+}
+
+/* RIDE INFO */
+
+.rideInfo {
+  padding: 12px 0;
+  border-top: 1px solid #f0f0f0;
+  color: #6b7280;
+  font-size: 14px;
+  text-transform: capitalize;
+}
+
+/* ACTION */
+
+.actionBtn {
+  width: 100%;
+  border: none;
+  background: #111;
+  color: white;
+  padding: 14px;
+  border-radius: 12px;
+  font-weight: 800;
+  font-size: 15px;
+  transition: transform 0.15s, opacity 0.15s;
+}
+
+.actionBtn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* MOBILE */
+
+@media (max-width: 700px) {
+  .header {
+    padding: 0 16px;
+  }
+
+  .main {
+    width: min(100% - 20px, 600px);
+    padding-top: 24px;
+  }
+
+  .welcome h1 {
+    font-size: 27px;
+  }
+
+  .rides {
+    grid-template-columns: 1fr;
+  }
+
+  .statusCard {
+    padding: 16px;
+  }
+
+  .rideCard {
+    padding: 18px;
+  }
+}

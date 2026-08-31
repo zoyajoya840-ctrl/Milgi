@@ -197,3 +197,43 @@ def complete_ride(
         "ride_id": ride.id,
         "status": ride.status,
     }
+
+@router.get("/driver/{driver_id}/active")
+def get_driver_active_ride(
+    driver_id: str,
+    db: Session = Depends(get_db),
+):
+    ride = (
+        db.query(Ride)
+        .filter(
+            Ride.driver_id == driver_id,
+            Ride.status.in_(["accepted", "started"]),
+        )
+        .order_by(Ride.accepted_at.desc())
+        .first()
+    )
+
+    if ride is None:
+        return None
+
+    return ride
+
+@router.get("/passenger/{passenger_id}/active")
+def get_passenger_active_ride(
+    passenger_id: str,
+    db: Session = Depends(get_db),
+):
+    ride = (
+        db.query(Ride)
+        .filter(
+            Ride.passenger_id == passenger_id,
+            Ride.status.in_(["requested", "accepted", "started"]),
+        )
+        .order_by(Ride.created_at.desc())
+        .first()
+    )
+
+    if ride is None:
+        return None
+
+    return ride

@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import Rides from "./Rides";
 import "./App.css";
 
 const API_URL = "http://127.0.0.1:8000";
 
-const PASSENGER_ID = "f49a7147-d3d6-4409-afee-73fe51d4089c";
+const PASSENGER_ID = "3369da4e-d60f-4416-82f5-f00aa5eb518c";
 
 function App() {
   const [pickup, setPickup] = useState("");
@@ -14,10 +14,35 @@ function App() {
   const [rideId, setRideId] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-
   const [currentRide, setCurrentRide] = useState(null);
   const [activePage, setActivePage] = useState("home");
 
+  // Load passenger's active ride from backend
+  const loadActiveRide = async () => {
+    try {
+      const response = await axios.get(
+        `${API_URL}/rides/passenger/${PASSENGER_ID}/active`
+      );
+
+      const ride = response.data;
+
+      if (ride) {
+        setCurrentRide(ride);
+        setRideId(ride.id);
+        setRideRequested(true);
+
+        setPickup(ride.pickup_location || "");
+        setDrop(ride.drop_location || "");
+      } else {
+        setCurrentRide(null);
+        setRideRequested(false);
+      }
+    } catch (err) {
+      console.error("ACTIVE RIDE ERROR:", err);
+    }
+  };
+
+  // Request a new ride
   const handleRequestRide = async () => {
     if (!pickup.trim() || !drop.trim()) {
       setError("Please enter pickup and drop location.");
@@ -41,18 +66,11 @@ function App() {
       setRideId(response.data.ride_id);
       setRideRequested(true);
 
-      setCurrentRide({
-        id: response.data.ride_id,
-        passenger_id: PASSENGER_ID,
-        pickup_location: pickup,
-        drop_location: drop,
-        estimated_fare: 80,
-        status: response.data.status,
-      });
+      await loadActiveRide();
 
       console.log("Ride created:", response.data);
     } catch (err) {
-      console.error(err);
+      console.error("REQUEST RIDE ERROR:", err);
 
       if (err.response) {
         setError(
@@ -69,9 +87,19 @@ function App() {
     }
   };
 
+  // Automatically check ride status every 2 seconds
+  useEffect(() => {
+    loadActiveRide();
+
+    const interval = setInterval(() => {
+      loadActiveRide();
+    }, 2000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className="app">
-      {/* Header */}
       <header className="header">
         <div className="logo">
           <span className="logo-mark">M</span>
@@ -79,17 +107,15 @@ function App() {
         </div>
 
         <div className="language">
-          हिंदी / English
+          हिन्दी / English
         </div>
       </header>
 
-      {/* Main */}
       <main className="main">
         {activePage === "rides" ? (
           <Rides ride={currentRide} />
         ) : (
           <>
-            {/* Welcome */}
             <section className="welcome">
               <p className="small-text">
                 Welcome to MILGI
@@ -104,9 +130,7 @@ function App() {
               </p>
             </section>
 
-            {/* Ride Card */}
             <section className="ride-card">
-              {/* Pickup */}
               <div className="location-row">
                 <div className="location-icon pickup-icon">
                   ●
@@ -130,7 +154,6 @@ function App() {
 
               <div className="route-line"></div>
 
-              {/* Drop */}
               <div className="location-row">
                 <div className="location-icon drop-icon">
                   ●
@@ -152,7 +175,6 @@ function App() {
                 </div>
               </div>
 
-              {/* Fare */}
               <div className="fare-box">
                 <div>
                   <span className="fare-label">
@@ -167,7 +189,6 @@ function App() {
                 </span>
               </div>
 
-              {/* Request / Success */}
               {!rideRequested ? (
                 <button
                   className="request-button"
@@ -186,11 +207,23 @@ function App() {
 
                   <div>
                     <strong>
-                      Ride requested!
+                      {currentRide?.status === "accepted"
+                        ? "Driver accepted your ride!"
+                        : currentRide?.status === "started"
+                        ? "Your ride has started!"
+                        : currentRide?.status === "completed"
+                        ? "Ride completed!"
+                        : "Ride requested!"}
                     </strong>
 
                     <p>
-                      Finding a MILGI driver for you...
+                      {currentRide?.status === "accepted"
+                        ? "Your MILGI driver is coming."
+                        : currentRide?.status === "started"
+                        ? "You are now on your way."
+                        : currentRide?.status === "completed"
+                        ? "Thank you for riding with MILGI."
+                        : "Finding a MILGI driver for you..."}
                     </p>
 
                     {rideId && (
@@ -198,11 +231,19 @@ function App() {
                         Ride ID: {rideId}
                       </small>
                     )}
+
+                    {currentRide && (
+                      <div className="ride-live-status">
+                        Status:{" "}
+                        <strong>
+                          {currentRide.status}
+                        </strong>
+                      </div>
+                    )}
                   </div>
                 </div>
               )}
 
-              {/* Error */}
               {error && (
                 <div className="error-box">
                   {error}
@@ -210,7 +251,6 @@ function App() {
               )}
             </section>
 
-            {/* Quick Options */}
             <section className="quick-section">
               <h2>Quick options</h2>
 
@@ -221,7 +261,7 @@ function App() {
                   }
                   disabled={rideRequested}
                 >
-                  <span>📍</span>
+                  <span>🏠</span>
                   <small>Home</small>
                 </button>
 
@@ -231,7 +271,7 @@ function App() {
                   }
                   disabled={rideRequested}
                 >
-                  <span>🏢</span>
+                  <span>💼</span>
                   <small>Work</small>
                 </button>
 
@@ -250,9 +290,7 @@ function App() {
         )}
       </main>
 
-      {/* Bottom Navigation */}
       <nav className="bottom-nav">
-        {/* Home */}
         <button
           className={
             activePage === "home" ? "active" : ""
@@ -263,7 +301,6 @@ function App() {
           <small>Home</small>
         </button>
 
-        {/* Rides */}
         <button
           className={
             activePage === "rides" ? "active" : ""
@@ -274,7 +311,6 @@ function App() {
           <small>Rides</small>
         </button>
 
-        {/* Profile */}
         <button>
           <span>👤</span>
           <small>Profile</small>

@@ -65,3 +65,107 @@ def create_driver_profile(
     db.refresh(profile)
 
     return profile
+
+
+@router.post("/{driver_id}/online")
+def driver_go_online(
+    driver_id: str,
+    db: Session = Depends(get_db),
+):
+    driver = (
+        db.query(DriverProfile)
+        .filter(DriverProfile.id == driver_id)
+        .first()
+    )
+
+    if driver is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Driver profile not found",
+        )
+
+    if driver.verification_status != "approved":
+        raise HTTPException(
+            status_code=403,
+            detail="Driver is not verified yet",
+        )
+
+    driver.driver_status = "online"
+
+    db.commit()
+    db.refresh(driver)
+
+    return {
+        "message": "Driver is now online",
+        "driver_id": str(driver.id),
+        "driver_status": driver.driver_status,
+    }
+
+
+@router.post("/{driver_id}/offline")
+def driver_go_offline(
+    driver_id: str,
+    db: Session = Depends(get_db),
+):
+    driver = (
+        db.query(DriverProfile)
+        .filter(DriverProfile.id == driver_id)
+        .first()
+    )
+
+    if driver is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Driver profile not found",
+        )
+
+    driver.driver_status = "offline"
+
+    db.commit()
+    db.refresh(driver)
+
+    return {
+        "message": "Driver is now offline",
+        "driver_id": str(driver.id),
+        "driver_status": driver.driver_status,
+    }
+
+
+@router.get("/{driver_id}/status")
+def get_driver_status(
+    driver_id: str,
+    db: Session = Depends(get_db),
+):
+    driver = (
+        db.query(DriverProfile)
+        .filter(DriverProfile.id == driver_id)
+        .first()
+    )
+
+    if driver is None:
+        raise HTTPException(
+            status_code=404,
+            detail="Driver profile not found",
+        )
+
+    return {
+        "driver_id": str(driver.id),
+        "driver_status": driver.driver_status,
+        "verification_status": driver.verification_status,
+    }
+
+@router.get("/{driver_id}/rides")
+def get_driver_rides(
+    driver_id: str,
+    db: Session = Depends(get_db),
+):
+    from app.models.ride import Ride
+
+    rides = (
+        db.query(Ride)
+        .filter(Ride.driver_id == driver_id)
+        .order_by(Ride.created_at.desc())
+        .all()
+    )
+
+    return rides
